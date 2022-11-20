@@ -30,7 +30,26 @@ public class EuclideanDistanceMatrix : DistanceMatrix
 		distanceMatrix = GetDistanceMatrix();
 	}
 
-	public override double[,] GetDistanceMatrix()
+    public override int FindClosest(int index)
+    {
+		var minDistance = GetDistance(0, index);
+		int minIndex = 0;
+        for (int i = 1; i < Length; i++)
+		{
+			// Don't return the same document as closest.
+			if (i != index)
+			{
+				var distance = GetDistance(i, index);
+				if (distance < minDistance)
+				{
+					minDistance = distance;
+					minIndex = i;
+				}
+			}
+		}
+		return minIndex;
+    }
+    public override double[,] GetDistanceMatrix()
 	{
 		var result = new double[Length, Length];
 		for (int i = 0; i < Length; i++)

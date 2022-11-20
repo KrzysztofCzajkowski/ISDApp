@@ -117,8 +117,6 @@ do
     if (pick > 0 && pick <= fileDictionary.Count)
     {
         Random random = new Random();
-        //var test = fileDictionary.Select(x => x.Value)
-        //    .Where(x => x.Cluster == fileDictionary[pick - 1].Cluster && x.Name != fileDictionary[pick - 1].Name);
         var matches = fileDictionary.Where(x => x.Value.Cluster == fileDictionary[pick - 1].Cluster && x.Key != pick-1);
         if (matches.Any())
         {
@@ -137,6 +135,61 @@ do
         Console.WriteLine("Arr! Document not found!");
     }
 } while (pick != 0);
+
+// Pick 2 random documents, mark one as "bad" and other as "good"
+Random rnd = new();
+int badIndex = rnd.Next(0, fileDictionary.Count);
+int goodIndex;
+do
+{
+    goodIndex = rnd.Next(0, fileDictionary.Count);
+} while (badIndex == goodIndex);
+var badFile = fileDictionary[badIndex];
+var goodFile = fileDictionary[goodIndex];
+
+// Add new document by user (specify frequency of each term
+string specification = String.Empty;
+string[] termFrequenciesString;
+do
+{
+    Console.WriteLine($"Specify {terms.Length} term frequencies for new document, separated by spaces:");
+    specification = Console.ReadLine();
+    termFrequenciesString = specification.Split(" ");
+} while (termFrequenciesString.Length != terms.Length);
+
+// Create new occurence matrix with 3 documents.
+OccurenceMatrix goodVsBadOccurenceMatrix = new(3, terms.Length);
+for (int i = 0; i < terms.Length; i++)
+{
+    goodVsBadOccurenceMatrix.Matrix[0, i] = occurenceMatrix.Matrix[badIndex, i];
+}
+for (int i = 0; i < terms.Length; i++)
+{
+    goodVsBadOccurenceMatrix.Matrix[1, i] = occurenceMatrix.Matrix[goodIndex, i];
+}
+for (int i = 0; i < terms.Length; i++)
+{
+    goodVsBadOccurenceMatrix.Matrix[2, i] = double.Parse(termFrequenciesString[i]);
+}
+
+// Normalize
+OccurenceMatrix normalizedGoodVsBad = goodVsBadOccurenceMatrix.Normalize();
+
+// Get distances
+var euclideanDistances = new EuclideanDistanceMatrix(normalizedGoodVsBad);
+
+// Find which document is closer to the newly added
+var closestIndex = euclideanDistances.FindClosest(2);
+if (closestIndex == 0)
+{
+    Console.WriteLine($"Document closer to bad document {fileDictionary[badIndex].Name}");
+}
+else
+{
+    Console.WriteLine($"Document closer to good document {fileDictionary[goodIndex].Name}");
+}
+
+
 
 static void ShowVector(int[] vec, int wid)
 {
