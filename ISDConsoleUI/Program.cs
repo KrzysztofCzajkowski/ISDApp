@@ -1,8 +1,9 @@
 ﻿using ISDLibrary;
 using System.Diagnostics;
+using System.Reflection;
 
 // Get file names from directory and terms from terms.csv file
-string basePath = @"C:\Studia\Inteligentne Systemy Decyzyjne\";
+string basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\Data\";
 string[] filenames = Directory.GetFiles(basePath, "*.pdf");
 string[] terms = File.ReadAllText($"{basePath}terms.csv").Split(',');
 
@@ -112,7 +113,7 @@ foreach (var item in fileDictionary)
 int pick; // document choice by user
 do
 {
-    Console.WriteLine("\nPick yer file, lad!");
+    Console.WriteLine("\nPick your file!");
     pick = int.Parse(Console.ReadLine());
     if (pick > 0 && pick <= fileDictionary.Count)
     {
@@ -121,18 +122,18 @@ do
         if (matches.Any())
         {
             var match = matches.ElementAt(random.Next(0, matches.Count()));
-            Console.WriteLine("Aye, ye might want to read this next:");
+            Console.WriteLine("You might want to read this next:");
             Console.WriteLine($"D{match.Key + 1}\t-\t{match.Value.Name}");
-            Console.WriteLine($"'Tis in the same cluster: {fileDictionary[pick - 1].Cluster}");
+            Console.WriteLine($"It is in the same cluster: {fileDictionary[pick - 1].Cluster}");
         }
         else
         {
-            Console.WriteLine("Sad times! No matching document found!");
+            Console.WriteLine("No similar document found!");
         }
     }
     if (pick < 0 || pick > fileDictionary.Count)
     {
-        Console.WriteLine("Arr! Document not found!");
+        Console.WriteLine("Document not found!");
     }
 } while (pick != 0);
 
@@ -188,8 +189,6 @@ else
 {
     Console.WriteLine($"Document closer to good document {fileDictionary[goodIndex].Name}");
 }
-
-
 
 static void ShowVector(int[] vec, int wid)
 {

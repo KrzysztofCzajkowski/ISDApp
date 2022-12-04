@@ -1,11 +1,4 @@
-﻿using IronPdf.Editing;
-using Spectre.Console;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Spectre.Console;
 
 namespace ISDLibrary;
 public class EuclideanDistanceMatrix : DistanceMatrix
